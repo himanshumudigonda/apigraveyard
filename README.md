@@ -17,8 +17,8 @@
 <p align="center">
   <a href="https://www.npmjs.com/package/apigraveyard"><img src="https://img.shields.io/npm/v/apigraveyard.svg?style=flat-square" alt="npm version"></a>
   <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square" alt="License: MIT"></a>
-  <a href="https://github.com/yourusername/apigraveyard/actions"><img src="https://img.shields.io/github/actions/workflow/status/yourusername/apigraveyard/ci.yml?style=flat-square" alt="Build Status"></a>
-  <a href="https://github.com/yourusername/apigraveyard"><img src="https://img.shields.io/github/stars/yourusername/apigraveyard?style=flat-square" alt="GitHub Stars"></a>
+  <a href="https://github.com/himanshumudigonda/apigraveyard/actions"><img src="https://img.shields.io/github/actions/workflow/status/himanshumudigonda/apigraveyard/ci.yml?style=flat-square" alt="Build Status"></a>
+  <a href="https://github.com/himanshumudigonda/apigraveyard"><img src="https://img.shields.io/github/stars/himanshumudigonda/apigraveyard?style=flat-square" alt="GitHub Stars"></a>
 </p>
 
 ---
@@ -433,7 +433,7 @@ We're actively working on making APIgraveyard even better:
 - [ ] 🔔 **Expiry Alerts** — Get notified before keys expire
 - [ ] 📈 **Usage Analytics** — Track API usage across projects
 
-Have a feature request? [Open an issue](https://github.com/yourusername/apigraveyard/issues)!
+Have a feature request? [Open an issue](https://github.com/himanshumudigonda/apigraveyard/issues)!
 
 ---
 
@@ -464,7 +464,7 @@ We love contributions! Here's how you can help:
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/apigraveyard.git
+git clone https://github.com/himanshumudigonda/apigraveyard.git
 cd apigraveyard
 
 # Install dependencies
@@ -487,9 +487,8 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 ## 👤 Author
 
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Twitter: [@yourtwitter](https://twitter.com/yourtwitter)
+**Himanshu Mudigonda**
+- GitHub: [@himanshumudigonda](https://github.com/himanshumudigonda)
 
 ---
 
