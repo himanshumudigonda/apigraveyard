@@ -154,6 +154,7 @@ function createProgram() {
   // ============================================
   program
     .command('scan <directory>')
+    .alias('s')
     .description('Scan a project directory for exposed API keys')
     .option('-r, --recursive', 'Scan directories recursively', true)
     .option('-t, --test', 'Test keys after scanning', false)
@@ -223,6 +224,7 @@ function createProgram() {
   // ============================================
   program
     .command('test [project-path]')
+    .alias('t')
     .description('Test validity of stored API keys')
     .option('-a, --all', 'Test all projects', false)
     .action(async (projectPath, options) => {
@@ -280,8 +282,7 @@ function createProgram() {
   // LIST COMMAND
   // ============================================
   program
-    .command('list')
-    .description('List all scanned projects')
+    .command('list')    .alias('l')    .description('List all scanned projects')
     .option('-s, --stats', 'Show database statistics', false)
     .action(async (options) => {
       try {
@@ -308,6 +309,7 @@ function createProgram() {
   // ============================================
   program
     .command('show <project-path>')
+    .alias('sh')
     .description('Show details for a specific project')
     .option('-k, --key <index>', 'Show details for specific key by index')
     .action(async (projectPath, options) => {
@@ -363,6 +365,7 @@ function createProgram() {
   // ============================================
   program
     .command('clean')
+    .alias('c')
     .description('Remove invalid/expired keys from database')
     .option('-f, --force', 'Skip confirmation prompt', false)
     .action(async (options) => {
@@ -449,6 +452,7 @@ function createProgram() {
   // ============================================
   program
     .command('export')
+    .alias('e')
     .description('Export all keys to a file')
     .option('-f, --format <format>', 'Output format (json|csv)', 'json')
     .option('-o, --output <file>', 'Output file path')
@@ -540,6 +544,7 @@ function createProgram() {
   // ============================================
   program
     .command('ban <key>')
+    .alias('b')
     .description('Ban an API key (mark as compromised)')
     .option('-d, --delete', 'Offer to delete from all files', false)
     .action(async (keyValue, options) => {
@@ -603,6 +608,7 @@ function createProgram() {
   // ============================================
   program
     .command('delete <project-path>')
+    .alias('d')
     .description('Remove a project from tracking')
     .option('-f, --force', 'Skip confirmation prompt', false)
     .action(async (projectPath, options) => {
@@ -646,6 +652,7 @@ function createProgram() {
   // ============================================
   program
     .command('stats')
+    .alias('st')
     .description('Show database statistics')
     .action(async () => {
       try {

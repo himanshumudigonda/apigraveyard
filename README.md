@@ -124,6 +124,24 @@ apigraveyard list --stats
 
 ---
 
+## ⚡ Command Shortcuts
+
+Every command has a short alias for faster typing:
+
+| Command | Shortcut | Example |
+|---------|----------|---------|
+| `scan` | `s` | `apigraveyard s .` |
+| `test` | `t` | `apigraveyard t` |
+| `list` | `l` | `apigraveyard l` |
+| `show` | `sh` | `apigraveyard sh ./project` |
+| `clean` | `c` | `apigraveyard c` |
+| `export` | `e` | `apigraveyard e -f json` |
+| `ban` | `b` | `apigraveyard b <key>` |
+| `delete` | `d` | `apigraveyard d ./project` |
+| `stats` | `st` | `apigraveyard st` |
+
+---
+
 ## 📸 Usage Examples
 
 ### Scanning a Project
