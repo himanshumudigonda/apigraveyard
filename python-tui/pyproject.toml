@@ -1,0 +1,64 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "apigraveyard-tui"
+version = "1.0.0"
+description = "🪦 A beautiful TUI for finding dead APIs haunting your codebase"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+authors = [
+    { name = "Himanshu Mudigonda", email = "himanshumudigonda@gmail.com" }
+]
+keywords = ["api", "keys", "security", "tui", "textual", "scanner"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+
+dependencies = [
+    "textual>=0.47.0",
+    "httpx>=0.27.0",
+    "rich>=13.7.0",
+    "aiofiles>=23.2.1",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "textual-dev>=1.4.0",
+]
+
+[project.scripts]
+apigraveyard-tui = "apigraveyard_tui.app:main"
+
+[project.urls]
+Homepage = "https://github.com/himanshumudigonda/apigraveyard"
+Repository = "https://github.com/himanshumudigonda/apigraveyard"
+Issues = "https://github.com/himanshumudigonda/apigraveyard/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/apigraveyard_tui"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/",
+    "README.md",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
