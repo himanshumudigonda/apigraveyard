@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# APIgraveyard config
+.apigraveyard.json
+
+# Logs
+*.log
+
+# Build output
+dist/
+
+# Test project (contains fake API keys)
+test-project/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

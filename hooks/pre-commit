@@ -1,0 +1,203 @@
+#!/bin/bash
+#
+# APIgraveyard Pre-commit Hook
+# Prevents committing files containing exposed API keys
+#
+# Installation:
+#   cp hooks/pre-commit .git/hooks/pre-commit
+#   chmod +x .git/hooks/pre-commit
+#
+
+# Colors for output
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+GREEN='\033[0;32m'
+CYAN='\033[0;36m'
+DIM='\033[2m'
+BOLD='\033[1m'
+NC='\033[0m' # No Color
+
+# API Key patterns (same as scanner.js)
+PATTERNS=(
+  # OpenAI
+  'sk-[A-Za-z0-9]{48}'
+  # Groq
+  'gsk_[A-Za-z0-9]{52}'
+  # GitHub
+  'gh[ps]_[A-Za-z0-9]{36}'
+  # Stripe
+  'sk_(live|test)_[A-Za-z0-9]{24}'
+  # Google/Firebase
+  'AIza[A-Za-z0-9_-]{35}'
+  # AWS
+  'AKIA[A-Z0-9]{16}'
+  # Anthropic
+  'sk-ant-[A-Za-z0-9_-]{95}'
+  # Hugging Face
+  'hf_[A-Za-z0-9]{34}'
+)
+
+# Service names corresponding to patterns
+SERVICE_NAMES=(
+  "OpenAI"
+  "Groq"
+  "GitHub"
+  "Stripe"
+  "Google/Firebase"
+  "AWS"
+  "Anthropic"
+  "Hugging Face"
+)
+
+# Dangerous file patterns
+DANGEROUS_FILES=(
+  '.env'
+  '.env.local'
+  '.env.production'
+  '.env.development'
+  '*.pem'
+  '*.key'
+  '*secret*'
+  '*credentials*'
+)
+
+# Track if we found any issues
+FOUND_KEYS=0
+FOUND_DANGEROUS=0
+BLOCKED_FILES=""
+
+# Function to mask a key for display
+mask_key() {
+  local key="$1"
+  local len=${#key}
+  if [ $len -le 8 ]; then
+    echo "****"
+  else
+    echo "${key:0:4}***...***${key: -4}"
+  fi
+}
+
+# Function to get service name for a pattern index
+get_service_name() {
+  echo "${SERVICE_NAMES[$1]}"
+}
+
+# Print banner
+echo -e "${DIM}🪦 APIgraveyard: Scanning staged files for API keys...${NC}"
+echo ""
+
+# Get list of staged files (Added, Copied, Modified)
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null)
+
+if [ -z "$STAGED_FILES" ]; then
+  echo -e "${GREEN}✓ No staged files to check.${NC}"
+  exit 0
+fi
+
+# Check for dangerous files being committed
+for file in $STAGED_FILES; do
+  filename=$(basename "$file")
+  
+  # Check against dangerous patterns
+  for pattern in "${DANGEROUS_FILES[@]}"; do
+    case "$filename" in
+      $pattern)
+        if [ $FOUND_DANGEROUS -eq 0 ]; then
+          echo -e "${YELLOW}⚠️  WARNING: Potentially sensitive files staged${NC}"
+          echo ""
+        fi
+        echo -e "  ${YELLOW}⚠️  $file${NC}"
+        FOUND_DANGEROUS=1
+        ;;
+    esac
+  done
+done
+
+if [ $FOUND_DANGEROUS -eq 1 ]; then
+  echo ""
+fi
+
+# Scan each staged file for API keys
+for file in $STAGED_FILES; do
+  # Skip binary files and non-existent files
+  if [ ! -f "$file" ]; then
+    continue
+  fi
+  
+  # Skip files that are likely binary
+  if file "$file" | grep -q "binary"; then
+    continue
+  fi
+  
+  # Read file content from the staged version
+  content=$(git show :"$file" 2>/dev/null)
+  
+  if [ -z "$content" ]; then
+    continue
+  fi
+  
+  # Check each pattern
+  for i in "${!PATTERNS[@]}"; do
+    pattern="${PATTERNS[$i]}"
+    service=$(get_service_name $i)
+    
+    # Find matches with line numbers
+    line_num=0
+    while IFS= read -r line; do
+      line_num=$((line_num + 1))
+      
+      # Check if line matches pattern
+      if echo "$line" | grep -qE "$pattern"; then
+        # Extract the matched key
+        matched_key=$(echo "$line" | grep -oE "$pattern" | head -1)
+        masked=$(mask_key "$matched_key")
+        
+        if [ $FOUND_KEYS -eq 0 ]; then
+          echo -e "${RED}${BOLD}❌ COMMIT BLOCKED - API Keys Detected!${NC}"
+          echo ""
+        fi
+        
+        echo -e "${RED}Found in:${NC} ${CYAN}$file${NC} ${DIM}(line $line_num)${NC}"
+        echo -e "  ${YELLOW}$service key:${NC} $masked"
+        echo ""
+        
+        FOUND_KEYS=1
+        BLOCKED_FILES="$BLOCKED_FILES $file"
+      fi
+    done <<< "$content"
+  done
+done
+
+# If keys were found, show suggestions and exit with error
+if [ $FOUND_KEYS -eq 1 ]; then
+  echo -e "${DIM}─────────────────────────────────────────────────${NC}"
+  echo ""
+  echo -e "${BOLD}Suggested fixes:${NC}"
+  echo -e "  ${GREEN}1.${NC} Move keys to ${CYAN}.env${NC} file"
+  echo -e "  ${GREEN}2.${NC} Add ${CYAN}.env${NC} to ${CYAN}.gitignore${NC}"
+  echo -e "  ${GREEN}3.${NC} Unstage the file(s):"
+  
+  # Show unique files
+  unique_files=$(echo "$BLOCKED_FILES" | tr ' ' '\n' | sort -u)
+  for f in $unique_files; do
+    if [ -n "$f" ]; then
+      echo -e "     ${DIM}git reset HEAD $f${NC}"
+    fi
+  done
+  
+  echo ""
+  echo -e "${DIM}To bypass this check (NOT recommended):${NC}"
+  echo -e "  ${DIM}git commit --no-verify${NC}"
+  echo ""
+  
+  exit 1
+fi
+
+# Check if only dangerous files warning (not blocking)
+if [ $FOUND_DANGEROUS -eq 1 ]; then
+  echo -e "${YELLOW}Consider adding sensitive files to .gitignore${NC}"
+  echo ""
+fi
+
+echo -e "${GREEN}✓ No API keys detected in staged files.${NC}"
+exit 0
